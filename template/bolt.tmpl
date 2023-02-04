@@ -1,0 +1,160 @@
+[%
+USE Whostmgr;
+USE JSON;
+
+IF locale.get_html_dir_attr() == 'rtl';
+SET rtl_bootstrap = Whostmgr.find_file_url('/3rdparty/bootstrap-rtl/optimized/dist/css/bootstrap-rtl.min.css');
+END;
+
+SET styleSheets = [
+    rtl_bootstrap,
+    '/libraries/fontawesome/css/font-awesome.min.css'
+    ];
+
+WRAPPER 'master_templates/master.tmpl'
+    header = locale.maketext("Bolt Website Locker")
+    stylesheets = styleSheets,
+    theme='bootstrap';
+    icon='/addon_plugins/bolt-64x64.png';
+    breadcrumbdata = {
+             previous = [{name = "Home",url = "/scripts/command?PFILE=main"}, {name="Plugins", url="/scripts/command?PFILE=Plugins"}],
+             name = 'Bolt Website Locker',
+             url = '/cgi/bolt/index.cgi',
+             },
+%]
+<style>
+  @base:#212121;
+  .spinning {
+    /* background-color: #212121;  */
+    padding-right: 40px;
+}
+.spinning:after {
+    content: '';
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    width: 0;
+    height: 0;
+    box-shadow: 0px 0px 0 1px darken(#212121,10%);
+    position: absolute;
+    border-radius: 50%;
+    animation: rotate360 .5s infinite linear, exist .1s forwards ease;
+}
+
+.spinning:before {
+    content: "";
+    width: 0px;
+    height: 0px;
+    border-radius: 50%;
+    right: 6px;
+    top: 50%;
+    position: absolute;
+    border: 2px solid darken(#ffffff,40%);
+    border-right: 3px solid #ffffff;
+    animation: rotate360 .5s infinite linear, exist .1s forwards ease ;
+    
+}
+
+
+
+@keyframes rotate360 { 
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@keyframes exist { 
+    100% {
+        width: 15px;
+        height: 15px;
+        margin: -8px 5px 0 0;
+    }
+}
+</style>
+<div class="callout callout-info">
+<p><strong>Bolt is a utility to help WHM system administrators quickly protect (lock) and un-protect (unlock) a Website public_html directory.</strong></p>
+
+<p>Bolt works by creating the necessary Apache config files and placing them in apache userdata folders, this includes generating a random password and reloading apache service. Placing those files outside the user account prevents the user from unlocking the website on his own.</p>
+</div>
+<form class="form-inline">
+  <div class="form-group mx-sm-3 mb-2">
+    <label for="domain" class="sr-only">Domain Name</label>
+    <input type="text" class="form-control" name="domain" id="domain" placeholder="Domain Name">
+  </div>
+  <button type="button" class="btn btn-primary mb-2" id="status" style="position: relative;">Check Status</button>
+  <button type="button" class="btn btn-danger mb-2" id="lock" style="position: relative;">Lock</button>
+  <button type="button" class="btn btn-success mb-2" id="unlock" style="position: relative;">Unlock</button>
+</form>
+<div class="card">
+  <div class="card-body border border-primary">
+    <h3 class="card-title">Output</h3>
+    <p class="card-text" id="output" style="border: 1px solid;padding: 5px;min-height: 100px;"></p>
+  </div>
+</div>
+  <script>
+    var statusb = document.getElementById("status");
+    var lockbutton = document.getElementById("lock");
+    var unlock = document.getElementById("unlock");
+    var domain = document.getElementById("domain");
+    statusb.addEventListener("click", function() {
+      disable_buttons();
+      statusb.classList.add('spinning');
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("output").innerHTML = this.responseText;
+          if (this.responseText.includes('UNLOCKED')) {
+            lock.disabled = false;
+          };
+          if (this.responseText.includes(' LOCKED')) {
+            unlock.disabled = false;
+          };
+          statusb.classList.remove('spinning');
+          enable_buttons();
+        };
+      };
+      xhttp.open("GET", "bolt.cgi?domain=" + domain.value + "&action=status", true);
+      xhttp.send();
+    });
+
+    lockbutton.addEventListener("click", function() {
+      disable_buttons();
+      lockbutton.classList.add('spinning');
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("output").innerHTML = this.responseText;
+          lock.classList.remove('spinning');
+          enable_buttons();
+        };
+      };
+      xhttp.open("GET", "bolt.cgi?domain=" + domain.value + "&action=lock", true);
+      xhttp.send();
+    });
+    
+    unlock.addEventListener("click", function() {
+      disable_buttons();
+      unlock.classList.add('spinning');
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("output").innerHTML = this.responseText;
+          unlock.classList.remove('spinning');
+          enable_buttons();
+        };
+      };
+      xhttp.open("GET", "bolt.cgi?domain=" + domain.value + "&action=unlock", true);
+      xhttp.send();
+    });
+    function disable_buttons(){
+      statusb.disabled = true;
+      lockbutton.disabled = true;
+      unlock.disabled = true;
+    };
+    function enable_buttons(){
+      statusb.disabled = false;
+      lockbutton.disabled = false;
+      unlock.disabled = false;
+    }
+  </script>
+[% END %]
+
