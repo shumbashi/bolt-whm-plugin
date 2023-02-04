@@ -32,5 +32,5 @@ pip install Jinja2
 /bin/cp ./cgi/index.cgi /usr/local/cpanel/whostmgr/docroot/cgi/bolt
 chmod 755 /usr/local/cpanel/whostmgr/docroot/cgi/bolt/bolt.cgi
 chmod 755 /usr/local/cpanel/whostmgr/docroot/cgi/bolt/index.cgi
-/bin/cp ./template/bolt.tmpl /usr/local/cpanel/whostmgr/docroot/cgi/bolt
+/bin/cp ./template/bolt.tmpl /usr/local/cpanel/whostmgr/docroot/templates/bolt
 /bin/cp ./images/bolt-64x64.png /usr/local/cpanel/whostmgr/docroot/addon_plugins
