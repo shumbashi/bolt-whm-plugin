@@ -11,14 +11,14 @@ License:Apache License Version 2.0
 
 1. Download the latest package from Releases page, or:
 ```
-wget https://github.com/shumbashi/bolt-whm-plugin/archive/refs/tags/v1.0.0.zip -O bolt-whm-plugin-1.0.0.zip
+wget https://github.com/shumbashi/bolt-whm-plugin/archive/refs/tags/v1.0.1.zip -O bolt-whm-plugin-1.0.1.zip
 ```
 2. Uncompress the downloaded package
 ```
-unzip bolt-whm-plugin-1.0.0.zip
+unzip bolt-whm-plugin-1.0.1.zip
 ```
 3. Run the installer
 ```
-cd bolt-whm-plugin-1.0.0/
+cd bolt-whm-plugin-1.0.1/
 bash installer.sh
 ```
