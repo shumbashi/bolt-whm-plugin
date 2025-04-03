@@ -22,7 +22,7 @@ if [ ! -d /usr/local/cpanel/whostmgr/docroot/templates/bolt ]
 fi
 
 # Install PIP Packages
-pip install Jinja2
+pip2 install Jinja2
 
 # Register the plugin with AppConfig.
 /usr/local/cpanel/bin/register_appconfig ./conf/bolt.conf
